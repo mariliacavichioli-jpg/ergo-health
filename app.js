@@ -10,7 +10,78 @@ let avaliacoes = [];
 
 // HOME
 app.get("/", (req, res) => {
-  res.send("🚀 Ergo & Health ONLINE");
+  res.send(`
+    <html>
+      <head>
+        <title>Ergo & Health</title>
+        <style>
+          body {
+            font-family: Arial;
+            padding: 30px;
+            background: #f3f4f6;
+          }
+          .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: auto;
+            text-align: center;
+          }
+          button {
+            padding: 10px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h1>Ergo & Health</h1>
+          <p>Avaliação ergonômica</p>
+
+          <select id="metodo">
+            <option value="RULA">RULA</option>
+            <option value="REBA">REBA</option>
+          </select>
+
+          <br><br>
+
+          <button onclick="avaliar()">Avaliar</button>
+
+          <pre id="resultado"></pre>
+
+          <br>
+
+          <button onclick="gerarPDF()">Gerar Laudo</button>
+        </div>
+
+        <script>
+          async function avaliar() {
+            const metodo = document.getElementById("metodo").value;
+
+            const res = await fetch("/avaliacoes", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ metodo })
+            });
+
+            const data = await res.json();
+
+            document.getElementById("resultado").innerText =
+              JSON.stringify(data, null, 2);
+          }
+
+          function gerarPDF() {
+            window.open("/relatorio/0", "_blank");
+          }
+        </script>
+      </body>
+    </html>
+  `);
 });
 
 // AVALIAÇÃO
